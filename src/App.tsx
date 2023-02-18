@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import {urlGetProducts} from './endpoints';
 import { Router } from './routers/Router';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 function App() {
   /*useEffect(() => {

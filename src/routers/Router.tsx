@@ -22,8 +22,8 @@ export const Router = () => {
             style={{ maxHeight: '100px' }}
             navbarScroll
           >
-            <Nav.Link as={Link} to="/products" >
-              Home
+            <Nav.Link as={Link} to="/products">
+              Productos
             </Nav.Link>
             <Nav.Link as={Link} to="/addproduct" >
               Agregar Producto

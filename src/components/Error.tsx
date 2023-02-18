@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const Error = () => {
   return (
@@ -9,9 +10,7 @@ export const Error = () => {
           <p className="fs-3">
             <span className="text-danger">404</span> Página no encontrada.
           </p>
-          <a href="index.html" className="btn btn-primary">
-            Ir a Home
-          </a>
+          <Link to="/" className="btn btn-primary">Ir a Home</Link>
         </div>
       </div>
     </div>
