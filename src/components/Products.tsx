@@ -3,7 +3,9 @@ import axios from "axios";
 import { urlGetProducts } from "../endpoints";
 import Table from "react-bootstrap/Table";
 import { ProductDTO } from "../interfaces/ProductDTO";
-import Spinner from "react-bootstrap/Spinner";
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { InputText } from "primereact/inputtext";
+
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
@@ -55,18 +57,16 @@ export const Products = () => {
   return (
     <div className="container mt-5">
       {loading && (
-        <div className="text-center">
-          <Spinner animation="border" />
-        </div>
+         <div className="text-center">
+         <ProgressSpinner />
+      </div>
       )}
       <div>
       <div className="mb-3">
-        <Form.Control
-          type="text"
-          name="search"
-          placeholder="Buscar..."
-          onChange={handleSearch}
-        />
+        <span className="p-float-label">
+          <InputText id="username" onChange={handleSearch} />
+          <label htmlFor="username">Buscar</label>
+        </span>
       </div>
       <div>
         <Table striped bordered hover>
@@ -117,7 +117,7 @@ export const Products = () => {
                   <Form.Label>Precio</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder={product.price && product.description}
+                    placeholder={product.price && product.price}
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">

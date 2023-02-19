@@ -1,44 +1,40 @@
 import React from 'react'
-import { Routes, Route, NavLink, Link, BrowserRouter } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { Products } from '../components/Products'
 import { AddProduct } from '../components/AddProduct'
 import { Error } from '../components/Error'
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
+import { Menubar } from 'primereact/menubar';
+import {useNavigate} from "react-router-dom";
 
 
 export const Router = () => {
+
+  const navigate = useNavigate();
+
+  const items = [
+    {
+      label: 'Productos',
+      icon: 'pi pi-fw pi-file',
+      command: () => {navigate('/') }
+    },
+    {
+      label: 'Añadir Producto',
+      icon: 'pi pi-fw pi-file',
+      command: () => {navigate('/addproduct') }
+    }
+];
   return (
     <>
-      <BrowserRouter>
-      <Navbar bg="light" expand="lg">
-      <Container fluid>
-        <Navbar.Brand href="#">Productos</Navbar.Brand>
-        <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll">
-          <Nav
-            className="me-auto my-2 my-lg-0"
-            style={{ maxHeight: '100px' }}
-            navbarScroll
-          >
-            <Nav.Link as={Link} to="/products">
-              Productos
-            </Nav.Link>
-            <Nav.Link as={Link} to="/addproduct" >
-              Agregar Producto
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-      </Navbar>
+      <div className="card">
+            <Menubar model={items} />
+        </div>
       <Routes>
         <Route path='/' element={ <Products/>} />
         <Route path='/products' element={<Products/>} />
         <Route path='/addproduct' element={<AddProduct/>} />
         <Route path='*' element={<Error/>} />
       </Routes>
-    </BrowserRouter>
+
     </>
   )
 }

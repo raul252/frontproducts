@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { urlGetProducts } from "../endpoints";
 import { ProductDTO } from "../interfaces/ProductDTO";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
-import Alert from 'react-bootstrap/Alert';
+import { ProgressSpinner } from "primereact/progressspinner";
 import { useNavigate } from "react-router-dom";
+import { InputText } from "primereact/inputtext";
+import { InputNumber } from "primereact/inputnumber";
+import { Dropdown } from "primereact/dropdown";
+import { Button } from "primereact/button";
+
+import { Toast } from "primereact/toast";
 
 export const AddProduct = () => {
   const [loading, setLoading] = useState(false);
@@ -14,9 +17,21 @@ export const AddProduct = () => {
   const [values, setValues] = useState({
     name: "",
     description: "",
-    price: "",
+    price: 0,
     family: "",
   });
+
+  const toast = useRef<Toast>(null);
+
+  const [selectedFamily, setSelectedFamily] = useState("");
+
+  const families = [
+    { name: "TV", code: "TV" },
+    { name: "Moviles", code: "Moviles" },
+    { name: "Portatiles", code: "Portatiles" },
+    { name: "PCs", code: "PCs" },
+    { name: "Componentes", code: "Componentes" },
+  ];
 
   const navigate = useNavigate();
 
@@ -27,78 +42,126 @@ export const AddProduct = () => {
     }));
   };
 
+  const handleChangeNumeric = (e: any) => {
+    setValues((values) => ({
+      ...values,
+      ["price"]: e.value,
+    }));
+  };
+
+  const handleChangeList = (e: any) => {
+    setSelectedFamily(e);
+    setValues((values) => ({
+      ...values,
+      ["family"]: e.code,
+    }));
+  };
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
+
+    //Guardar las familias
+
+    console.log(values);
     setError(false);
     setLoading(true);
-    axios.post<ProductDTO>(urlGetProducts, values).then((response) => {
-      //console.log(response);
-      navigate("/");
-    }).catch(response=> {
-      setError(true);
-    }).finally(()=> {
-      setLoading(false);
-    })
+    axios
+      .post<ProductDTO>(urlGetProducts, values)
+      .then((response) => {
+        //console.log(response);
+        toast.current?.show({
+          severity: "success",
+          summary: "Success",
+          detail: "Datos insertados correctamente",
+          life: 3000,
+        });
+        navigate("/");
+      })
+      .catch((response) => {
+        toast.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Error",
+          life: 3000,
+        });
+        setError(true);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
     <div className="container mt-5">
       {loading && (
         <div className="text-center">
-          <Spinner animation="border" />
+          <ProgressSpinner />
         </div>
       )}
-      {error && (
-        <Alert key="danger" variant="danger">
-          Error al enviar los datos
-        </Alert>
-      )}
-      <Form method="post" onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>Nombre</Form.Label>
-          <Form.Control
-            type="text"
+      <Toast ref={toast}/>
+      <form method="post" onSubmit={handleSubmit}>
+        <div className="mt-5">
+          <span className="p-float-label">
+            <InputText
+              id="name"
+              aria-describedby="name-help"
+              required
+              placeholder="Nombre"
+              name="name"
+              value={values.name}
+              onChange={handleChange}
+              className="formulario"
+            />
+            <label htmlFor="name">Nombre</label>
+          </span>
+        </div>
+        <div className="mt-5">
+          <span className="p-float-label">
+            <InputText
+              id="description"
+              aria-describedby="description-help"
+              required
+              placeholder="Descripcion"
+              name="description"
+              value={values.description}
+              onChange={handleChange}
+              className="formulario"
+            />
+            <label htmlFor="description">Descripcion</label>
+          </span>
+        </div>
+        <div className="mt-5">
+          <InputNumber
+            id="price"
+            aria-describedby="price-help"
             required
-            placeholder="Nombre"
-            name="name"
-            value={values.name}
-            onChange={handleChange}
+            currency="EUR"
+            locale="es-ES"
+            name="price"
+            value={values.price}
+            onChange={handleChangeNumeric}
+            className="formulario"
           />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Descripción</Form.Label>
-          <Form.Control type="text" required placeholder="Descripción" 
-          name="description"
-          value={values.description}
-          onChange={handleChange}/>
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Precio</Form.Label>
-          <Form.Control type="number" required placeholder="Precio" 
-           name="price"
-           value={values.price}
-           onChange={handleChange}
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Familia</Form.Label>
-          <Form.Select aria-label="Familia" required 
-          name="family"
-           value={values.family}
-           onChange={handleChange}>
-            <option>Seleccione una opción</option>
-            <option value="TV">TV</option>
-            <option value="Moviles">Moviles</option>
-            <option value="Portatiles">Portatiles</option>
-            <option value="PCs">PCs</option>
-            <option value="Componentes">Componentes</option>
-          </Form.Select>
-        </Form.Group>
+        </div>
 
-        <Button variant="primary" type="submit">
-          Guardar
-        </Button>
-      </Form>
+        <div className="mt-5">
+          <Dropdown
+            options={families}
+            name="family"
+            required={true}
+            optionLabel="name"
+            editable
+            placeholder="Seleccione familia"
+            value={selectedFamily}
+            onChange={(e) => handleChangeList(e.value)}
+            className="formulario"
+          />
+        </div>
+
+        <div className="mt-5">
+          <Button type="submit" label="Guardar" />
+        </div>
+      </form>
     </div>
   );
 };
