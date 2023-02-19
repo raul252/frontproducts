@@ -10,6 +10,7 @@ import Form from "react-bootstrap/Form";
 
 export const Products = () => {
   const [data, setData] = useState<ProductDTO[]>([]);
+  const [orginalData, setOriginalData] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [product, setProduct] = useState<ProductDTO>({
@@ -26,11 +27,25 @@ export const Products = () => {
     setShow(true);
   };
 
+  const handleSearch = (e: any) => {
+    if (e.target.value !== '') {
+      const filterdata = data.filter((item)=>{
+        return item.name.toLowerCase().includes(e.target.value.toLowerCase()) || 
+        item.description.toLowerCase().includes(e.target.value.toLowerCase())
+      });
+      setData(filterdata);
+    } else {
+      setData(orginalData);
+    }
+  };
+
+
   useEffect(() => {
     setLoading(true);
     axios.get<ProductDTO[]>(urlGetProducts).then((resp) => {
       //console.log(resp.data);
       setData(resp.data);
+      setOriginalData(resp.data);
       setLoading(false);
     }).catch(response=> {
     }).finally(()=> {
@@ -44,6 +59,15 @@ export const Products = () => {
           <Spinner animation="border" />
         </div>
       )}
+      <div>
+      <div className="mb-3">
+        <Form.Control
+          type="text"
+          name="search"
+          placeholder="Buscar..."
+          onChange={handleSearch}
+        />
+      </div>
       <div>
         <Table striped bordered hover>
           <thead>
@@ -67,6 +91,7 @@ export const Products = () => {
             ))}
           </tbody>
         </Table>
+      </div>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Producto Seleccionado</Modal.Title>
