@@ -1,7 +1,7 @@
 import React from 'react'
 import { Routes, Route, NavLink, Link, BrowserRouter } from 'react-router-dom'
 import { Products } from '../components/Products'
-import { Form } from '../components/Form'
+import { AddProduct } from '../components/AddProduct'
 import { Error } from '../components/Error'
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -35,7 +35,7 @@ export const Router = () => {
       <Routes>
         <Route path='/' element={ <Products/>} />
         <Route path='/products' element={<Products/>} />
-        <Route path='/addproduct' element={<Form/>} />
+        <Route path='/addproduct' element={<AddProduct/>} />
         <Route path='*' element={<Error/>} />
       </Routes>
     </BrowserRouter>

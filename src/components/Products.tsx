@@ -32,7 +32,10 @@ export const Products = () => {
       //console.log(resp.data);
       setData(resp.data);
       setLoading(false);
-    });
+    }).catch(response=> {
+    }).finally(()=> {
+      setLoading(false);
+    })
   }, []);
   return (
     <div className="container mt-5">
